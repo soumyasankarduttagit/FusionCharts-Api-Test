@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FusionCharts Check</title>
+    <script src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+</head>
+<body>
+    <button id="export">
+        Export
+        </button>
+        <div id="container">FusionCharts will render here</div>
+  
+    <script>
+        const URL_DATA = 'https://raw.githubusercontent.com/fusioncharts/dev_centre_docs/master/assets/datasources/fusiontime/examples/online-sales-single-series/data.json';
+const URL_SCHEMA = 'https://raw.githubusercontent.com/fusioncharts/dev_centre_docs/master/assets/datasources/fusiontime/examples/online-sales-single-series/schema.json';
+
+const jsonify = res => res.json();
+const dataFetch = fetch(URL_DATA).then(jsonify);
+const schemaFetch = fetch(URL_SCHEMA).then(jsonify);
+
+Promise.all([dataFetch, schemaFetch]).then(([data, schema]) => {
+  var fusionTable = new FusionCharts.DataStore().createDataTable(data, schema);
+
+  const chart = new FusionCharts({
+    type: 'timeseries',
+    renderAt: 'container',
+    width: "90%",
+    height: 490,
+    dataSource: {
+      data: fusionTable,
+      chart: {
+        exportEnabled: 1
+      },
+      caption: {
+        text: 'Online Sales of a SuperStore in the US'
+      },
+      yAxis: {
+        "plot": {
+          "value": "Sales",
+          "type": "line"
+        },
+      }
+    }
+  }).render();
+  document.getElementById("export").addEventListener('click', () => {
+    chart.exportChart({
+      "exportFormat": "pdf"
+    })
+  })
+
+});
+
+        
+        </script>
+</body>
+</html>
